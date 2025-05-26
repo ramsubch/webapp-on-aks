@@ -3,6 +3,6 @@ terraform {
     resource_group_name  = "tfstate-rg"
     storage_account_name = "tfstateaksstaging"
     container_name       = "tfstate"
-    key                  = "dev.terraform.tfstate"
+    key                  = "staging.terraform.tfstate"
   }
 }
