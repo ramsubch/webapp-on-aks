@@ -78,3 +78,12 @@ variable "tags" {
     project     = "aks"
   }
 }
+
+variable "node_pool_configs" {
+  description = "A list of objects, each defining a node pool with its name and tags. Example: [{ name = \"nodepool1\", tags = { environment = \"dev\" } }]"
+  type = list(object({
+    name = string
+    tags = map(string)
+    node_taints = optional(list(string), []) # Added node_taints as an optional attribute
+  }))
+}

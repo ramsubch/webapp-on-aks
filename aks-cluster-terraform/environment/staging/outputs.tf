@@ -6,5 +6,6 @@ output "kube_config" {
 
 output "cluster_name" {
   description = "AKS cluster name"
-  value       = module.aks.aks_name
+  value       = module.aks.host
+  sensitive = true
 }
