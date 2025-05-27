@@ -12,6 +12,7 @@ aks-cluster-terraform/
 │       ├── main.tf            # Main entrypoint for staging environment resources
 │       ├── outputs.tf         # Outputs for kubeconfig and cluster name
 │       ├── variables.tf       # Variable definitions for the staging environment
+│       ├── provider.tf        # Provider Plugin Configuration
 │       └── variables.tfvars   # Example variable values for staging
 ├── modules/
 │   ├── aks/
