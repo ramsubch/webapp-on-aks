@@ -52,3 +52,16 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# Define your node pool configurations here
+# Each object in the list represents a new node pool
+# 'name' is the node pool name (must be unique within the cluster)
+# 'tags' is a map of key-value pairs for the tags
+variable "node_pool_configs" {
+  description = "A list of objects, each defining a node pool with its name and tags. Example: [{ name = \"nodepool1\", tags = { environment = \"dev\" } }]"
+  type = list(object({
+    name = string
+    tags = map(string)
+    node_taints = optional(list(string), []) # Added node_taints as an optional attribute
+  }))
+}
