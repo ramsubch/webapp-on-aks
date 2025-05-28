@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aks-test-webapp-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway # Specify AGIC for this Ingress
+    appgw.ingress.kubernetes.io/ssl-redirect: "true" # Enforce HTTPS redirection
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "your-ssl-certificate-name" # REPLACE with your certificate name in Application Gateway
+    # Example for WAF policy (if you have one associated with your Application Gateway)
+    # appgw.ingress.kubernetes.io/waf-policy-resource-id: "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/ApplicationGatewayWafPolicies/<waf-policy-name>"
+  labels:
+    app: aks-test-webapp
+spec:
+  tls:
+  - hosts:
+    - your-domain.com # REPLACE with your actual domain
+    secretName: tls-secret # Optional: If you want to manage TLS certificates within Kubernetes (e.g., with cert-manager).
+                          # Otherwise, AGIC will handle SSL offloading with its configured certificates.
+  rules:
+  - host: your-domain.com # REPLACE with your actual domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aks-test-webapp-service
+            port:
+              number: 80

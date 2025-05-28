@@ -53,6 +53,16 @@ variable "tags" {
   default     = {}
 }
 
+variable "acr_name" {
+  description = "The acr name from where images can be pulled"
+  type        = string
+}
+
+variable "acr_rg_name" {
+  description = "The Resource group where acr is located"
+  type        = string
+}
+
 # Define your node pool configurations here
 # Each object in the list represents a new node pool
 # 'name' is the node pool name (must be unique within the cluster)
