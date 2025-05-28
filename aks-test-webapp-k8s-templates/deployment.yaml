@@ -69,6 +69,24 @@ spec:
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
+          # Pod anti-affinity ensures that replicas are scheduled on different worker nodes for resilience.
+          # This helps maximize availability in case a node fails.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - aks-test-webapp
+              topologyKey: "kubernetes.io/hostname"
+      # To schedule the pods on specific nodes, you can use tolerations
+      tolerations:
+      - key: "app"
+        operator: "Equal"
+        value: "frontend"
+        effect: "NoSchedule"
       # If pulling from Azure Container Registry (ACR) or other private registry
       # The secret must be created in the same namespace as the deployment beforehand
       imagePullSecrets:
