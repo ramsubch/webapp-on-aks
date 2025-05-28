@@ -59,6 +59,10 @@ aks-test-webapp-k8s-templates/
   - The `network-policy-default-deny.yaml` enforces a default-deny posture for all ingress and egress traffic to pods, ensuring that no network communication is allowed unless explicitly permitted. The `network-policy-allow.yaml` selectively allows only the required traffic, minimizing the attack surface and lateral movement within the cluster. By segmenting network access at the pod level, the deployment ensures that even if one pod is compromised, it cannot freely communicate with others, thus containing potential breaches and improving overall security posture.
 - Resilient scheduling and disruption handling
   - Pod anti-affinity rules ensure that replicas are scheduled on different nodes, improving availability and fault tolerance. The Pod Disruption Budget (PDB) ensures a minimum number of pods remain available during voluntary disruptions, such as node upgrades or maintenance.
+- Ingress-based exposure (vs. direct LoadBalancer)
+  - The application is exposed using an Ingress resource rather than a direct LoadBalancer public IP. This approach enables the use of cloud-native TLS termination (e.g., Azure Application Gateway or NGINX Ingress Controller with Azure-managed certificates), providing secure HTTPS endpoints without managing certificates inside the cluster. Additionally, Ingress allows routing multiple endpoints or services based on URL path prefixes (e.g., `/api`, `/web`), supporting more advanced traffic management and consolidation of public entry points.
+- Namespaces are intentionally not specfied in the templates as it can be specified when deploying templates, thus making generic
+- Helm can be used to package and make the configuration configurable using values.yaml and jinja templating. It has also advanced features of adding pre and post LCM hooks for advanced operations, but not considered in the scope of this
 
 ---
 

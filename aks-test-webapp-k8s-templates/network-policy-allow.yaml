@@ -18,3 +18,4 @@ spec:
       ports:
         - protocol: TCP
           port: 80
+    # To add other allow rules that allows connection from other PODs
