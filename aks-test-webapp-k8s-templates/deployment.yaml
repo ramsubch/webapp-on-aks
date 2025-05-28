@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-test-webapp-deployment
+  labels:
+    app: aks-test-webapp
+spec:
+  replicas: 3 # Increased replicas for better availability
+  selector:
+    matchLabels:
+      app: aks-test-webapp
+  template:
+    metadata:
+      labels:
+        app: aks-test-webapp
+    spec:
+      containers:
+      - name: web-app-container
+        image: your-docker-repo/your-web-app:latest # REPLACE with your actual Docker image
+        ports:
+        - containerPort: 80 # Assuming your web app listens on port 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000 # Run as a non-root user
+          seccompProfile:
+            type: RuntimeDefault # Use the default seccomp profile
+        env:
+        - name: NODE_ENV
+          value: staging
+        livenessProbe:
+          httpGet:
+            path: /healthz # Replace with your application's health endpoint
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /ready # Replace with your application's readiness endpoint
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: azure-container-registry-secret # If pulling from Azure Container Registry (ACR) or other private registry

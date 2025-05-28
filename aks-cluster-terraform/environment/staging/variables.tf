@@ -1,7 +1,7 @@
 variable "resource_group_name" {
   description = "Name of the resource group for AKS"
   type        = string
-  default     = "rg-aks-dev"
+  default     = "rg-aks-staging"
 }
 
 variable "location" {
@@ -13,7 +13,7 @@ variable "location" {
 variable "vnet_name" {
   description = "Name of the Virtual Network"
   type        = string
-  default     = "vnet-aks-dev"
+  default     = "vnet-aks-staging"
 }
 
 variable "address_space" {
@@ -37,13 +37,13 @@ variable "subnet_prefixes" {
 variable "aks_name" {
   description = "Name of the AKS cluster"
   type        = string
-  default     = "aks-dev"
+  default     = "aks-staging"
 }
 
 variable "dns_prefix" {
   description = "DNS prefix for the AKS cluster"
   type        = string
-  default     = "aksdev"
+  default     = "aksstaging"
 }
 
 variable "node_count" {
@@ -77,6 +77,16 @@ variable "tags" {
     environment = "staging"
     project     = "aks"
   }
+}
+
+variable "acr_name" {
+  description = "The acr name from where images can be pulled"
+  type        = string
+}
+
+variable "acr_rg_name" {
+  description = "The Resource group where acr is located"
+  type        = string
 }
 
 variable "node_pool_configs" {

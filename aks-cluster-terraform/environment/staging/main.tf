@@ -28,5 +28,7 @@ module "aks" {
   vm_size             = var.vm_size
   subnet_id           = module.networking.subnet_id
   tags                = var.tags
+  acr_name            = var.acr_name
+  acr_rg_name         = var.acr_rg_name
   node_pool_configs   = var.node_pool_configs
 }
