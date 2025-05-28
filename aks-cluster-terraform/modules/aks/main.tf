@@ -5,15 +5,15 @@ resource "azurerm_kubernetes_cluster" "this" {
   dns_prefix          = var.dns_prefix
 
   default_node_pool {
-    name                 = "default"
-    node_count           = var.node_count
-    vm_size              = var.vm_size
-    min_count            = var.min_count
-    max_count            = var.max_count
-    enable_auto_scaling  = true
-    vnet_subnet_id       = var.subnet_id
-    max_pods             = 110
-    os_disk_size_gb      = 30
+    name                = "default"
+    node_count          = var.node_count
+    vm_size             = var.vm_size
+    min_count           = var.min_count
+    max_count           = var.max_count
+    enable_auto_scaling = true
+    vnet_subnet_id      = var.subnet_id
+    max_pods            = 110
+    os_disk_size_gb     = 30
   }
 
   sku_tier = "Free" # Optional: Set to 'Free' tier for development/testing purposes
@@ -45,15 +45,15 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_additional_node_pools" {
   # Required properties for the node pool
   kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
   name                  = each.value.name # Uses the 'name' from the current node pool config
-  vm_size               = var.vm_size # Example VM size - keep consistent for same config
+  vm_size               = var.vm_size     # Example VM size - keep consistent for same config
   node_count            = 1
   os_disk_size_gb       = 30
   vnet_subnet_id        = var.subnet_id # Use the same subnet as the default node pool
 
 
-  enable_auto_scaling  = true
-  min_count             = 1
-  max_count             = 3
+  enable_auto_scaling = true
+  min_count           = 1
+  max_count           = 3
 
   # set node taints to prevent scheduling on these nodes
   node_taints = each.value.node_taints
