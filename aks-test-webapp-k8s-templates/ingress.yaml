@@ -1,3 +1,5 @@
+# We are exposing the web application via an Ingress resource that uses the Azure Application Gateway Ingress Controller (AGIC).
+# This Ingress will handle SSL termination, routing.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,19 +7,18 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway # Specify AGIC for this Ingress
     appgw.ingress.kubernetes.io/ssl-redirect: "true" # Enforce HTTPS redirection
-    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "your-ssl-certificate-name" # REPLACE with your certificate name in Application Gateway
-    # Example for WAF policy (if you have one associated with your Application Gateway)
-    # appgw.ingress.kubernetes.io/waf-policy-resource-id: "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/ApplicationGatewayWafPolicies/<waf-policy-name>"
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "aks-test-webapp-ingress-cert" # Name of the SSL certificate in the Application Gateway
+    appgw.ingress.kubernetes.io/waf-policy-resource-id: "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Network/ApplicationGatewayWafPolicies/<waf-policy-name>"
   labels:
     app: aks-test-webapp
 spec:
   tls:
   - hosts:
-    - your-domain.com # REPLACE with your actual domain
-    secretName: tls-secret # Optional: If you want to manage TLS certificates within Kubernetes (e.g., with cert-manager).
-                          # Otherwise, AGIC will handle SSL offloading with its configured certificates.
+    - aks-test-webapp.namespace.aks-cluster-domain # Route to this domain name must be configured with the Public IP of the Application Gateway
   rules:
-  - host: your-domain.com # REPLACE with your actual domain
+  # In this example, we are routing all traffic to the web application service on port 80.
+  # The same ingress can be extended to route traffic to multiple services based on the path or host.
+  - host: aks-test-webapp.namespace.aks-cluster-domain
     http:
       paths:
       - path: /

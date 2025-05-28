@@ -1,3 +1,4 @@
+# Explicitly allow ingress traffic to the web app 
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -13,16 +14,7 @@ spec:
     # This is a crucial security measure to limit who can connect to your pods directly.
     - from:
       - ipBlock:
-          # Replace with the CIDR of your Application Gateway subnet or AGIC's egress IPs
-          # If AGIC is in the same cluster, you might need to identify its pod labels or namespace.
-          # A more robust approach might involve Calico Network Policies with specific labels.
-          # For a basic setup, you might start with a broader range and refine.
-          # For AKS, this is often the CIDR of your Application Gateway's subnet.
-          cidr: "0.0.0.0/0" # WARNING: This is too broad for production.
-                           # Replace with the actual CIDR range of your AGIC/Application Gateway.
-                           # Consult your Azure network configuration for the Application Gateway's subnet CIDR.
-                           # Example: cidr: "10.0.1.0/24"
+          cidr: "10.0.0.0/64" 
       ports:
         - protocol: TCP
           port: 80
-    # Add other rules if your application needs to receive traffic from other specific sources (e.g., monitoring)

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: aks-test-webapp
 spec:
-  replicas: 3 # Increased replicas for better availability
+  replicas: 3
   selector:
     matchLabels:
       app: aks-test-webapp
@@ -16,10 +16,14 @@ spec:
     spec:
       containers:
       - name: web-app-container
-        image: your-docker-repo/your-web-app:latest # REPLACE with your actual Docker image
+        # For more security the image repo coud be hosted in ACR (Azure Container Registry)
+        # image: aksstaging-ctb0czeadxhjcxe4.azurecr.io/your-web-app:latest # <image-repo>/<path>:<versoion>
+        # Using a public image for demonstration purposes
+        image: docker.io/library/nginx:1.25.3-alpine
         ports:
         - containerPort: 80 # Assuming your web app listens on port 80
         resources:
+          # Requests whcich are guaranteed to the container and limits which cannot be exceeded
           requests:
             cpu: "100m"
             memory: "128Mi"
@@ -27,26 +31,49 @@ spec:
             cpu: "200m"
             memory: "256Mi"
         securityContext:
+          # Drop all capabilities to minimize security risks
+          # Depending on the application, you may want to allow specific capabilities
+          capabilities:
+            drop:
+            - ALL
+          # Disallow previlige escalation to run as file-owner
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           runAsNonRoot: true
-          runAsUser: 1000 # Run as a non-root user
+          runAsUser: 1000 # Run as a non-root 
+          fsGroup: 2000 # Set a specific group ID for the container. Different containers within the same pod can share the same group ID for file access.
           seccompProfile:
-            type: RuntimeDefault # Use the default seccomp profile
+          RuntimeDefault: 
+            # This is the recommended and most common setting. It tells Kubernetes to use the default seccomp profile provided by the container runtime (e.g., containerd, CRI-O).
+            # Container runtimes typically provide a sensible default profile that blocks many dangerous syscalls while allowing most common applications to function normally.
+            # This offers a good balance of security and compatibility.
+            type: RuntimeDefault
         env:
         - name: NODE_ENV
           value: staging
+        volumeMounts:
+        - name: app-config-volume
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf # Sub-path in the configMap to mount the content of
+          readOnly: true
+        # The test image nginx:1.25.3-alpine doesn't have these endpoints, but in a real application, there must be health checks impelemented
         livenessProbe:
           httpGet:
-            path: /healthz # Replace with your application's health endpoint
+            path: /healthz
             port: 80
           initialDelaySeconds: 15
           periodSeconds: 20
         readinessProbe:
           httpGet:
-            path: /ready # Replace with your application's readiness endpoint
+            path: /readyz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
+      # If pulling from Azure Container Registry (ACR) or other private registry
+      # The secret must be created in the same namespace as the deployment beforehand
       imagePullSecrets:
-      - name: azure-container-registry-secret # If pulling from Azure Container Registry (ACR) or other private registry
+      - name: azure-container-registry-secret
+      volumes:
+      - name: app-config-volume
+        configMap:
+          name: aks-test-webapp-health-config # This configMap must exist in the namespace

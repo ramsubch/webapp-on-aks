@@ -1,3 +1,4 @@
+# ClusterIP service for the web application
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,4 +12,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: ClusterIP # Internal service, exposed externally by Ingress
+# By default clusterIP ensure internal loadBalancing between pods with round-robin and decouples the need of POD IP/name to route traffic as they can change upon restart
+  type: ClusterIP

@@ -11,8 +11,9 @@ spec:
   maxReplicas: 10
   metrics:
   - type: Resource
+    # CPU utilization target, can also be based on memory or custom metrics
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 60 # Target 60% CPU utilization
+        averageUtilization: 80 # Target 80% CPU utilization

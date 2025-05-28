@@ -1,9 +1,10 @@
+# Add resilience to the webApp for voluntary disruptions like node drain/upgrade
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: aks-test-webapp-pdb
 spec:
-  minAvailable: 2 # Ensure at least 2 replicas are available during voluntary disruptions
+  minAvailable: 2 # Ensure at least 2 replicas are available during voluntary disruptions like node drain/upgrade/
   selector:
     matchLabels:
       app: aks-test-webapp

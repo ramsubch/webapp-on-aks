@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aks-test-webapp-health-config
+data:
+  default.conf: |
+    server {
+        listen 80;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+
+        # Liveness endpoint: Simple check that Nginx is running and responsive
+        location /healthz {
+            access_log off; # Avoid logging probe requests
+            return 200 'OK';
+            add_header Content-Type text/plain;
+        }
+
+        # Readiness endpoint: Could be the same as liveness for simple cases,
+        # or more complex if your app needs to initialize external dependencies.
+        location /readyz {
+            access_log off; # Avoid logging probe requests
+            return 200 'Ready';
+            add_header Content-Type text/plain;
+        }
+    }
