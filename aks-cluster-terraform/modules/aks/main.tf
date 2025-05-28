@@ -15,7 +15,8 @@ resource "azurerm_kubernetes_cluster" "this" {
     vnet_subnet_id      = var.subnet_id
     max_pods            = 110
     os_disk_size_gb     = 30
-    zones               = ["1", "2", "3"]
+    # Zones can be specified for redundancy and availability
+    #zones               = var.zones
   }
 
   sku_tier = "Free" # Optional: Set to 'Free' tier for development/testing purposes
@@ -57,7 +58,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_additional_node_pools" {
   vnet_subnet_id      = var.subnet_id
   max_pods            = 110
   os_disk_size_gb     = 30
-  zones               = ["1", "2", "3"]
+  # Zones can be specified for redundancy and availability
+  #zones               = var.zones
 
   # set node taints to prevent scheduling on these nodes
   node_taints = each.value.node_taints
